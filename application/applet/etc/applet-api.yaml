@@ -1,0 +1,11 @@
+Name: applet-api
+Host: 127.0.0.1
+Port: 8888
+Auth:
+  AccessSecret: duerueudfnd235sdh
+  AccessExpire: 3600
+UserRpc:
+  Etcd:
+    Hosts:
+      - 127.0.0.1:2379
+    Key: user.rpc

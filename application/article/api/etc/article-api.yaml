@@ -1,0 +1,18 @@
+Name: article-api
+Host: 127.0.0.1
+Port: 8889
+Auth:
+  AccessSecret: duerueudfnd235sdh
+  AccessExpire: 3600
+ArticleRpc:
+  Etcd:
+    Hosts:
+      - 127.0.0.1:2379
+    Key: article.rpc
+
+UserRPC:
+  Etcd:
+    Hosts:
+      - 127.0.0.1:2379
+    Key: user.rpc
+  NonBlock: true
