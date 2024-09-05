@@ -26,3 +26,6 @@ CREATE TABLE `like_count` (
   KEY `ix_update_time` (`update_time`),
   UNIQUE KEY `uk_biz_obj` (`biz_id`,`obj_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin COMMENT='点赞计数表';
+
+--数据表已经建好，在go_zero_demo/go_zero_beyond/application/like/mq 目录下执行
+-- goctl model mysql datasource --dir ./internal/model --table like_record,like_count  --cache true --url "root:root@tcp(127.0.0.1:3306)/beyond_like"
