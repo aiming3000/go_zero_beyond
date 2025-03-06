@@ -76,5 +76,4 @@ func (l *LoginLogic) Login(req *types.LoginRequest) (resp *types.LoginResponse, 
 		},
 	}, nil
 
-	return
 }

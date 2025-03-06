@@ -39,4 +39,5 @@ type VerificationRequest struct {
 }
 
 type VerificationResponse struct {
+	Code string `json:"code"`
 }

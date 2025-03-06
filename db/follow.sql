@@ -25,3 +25,6 @@ CREATE TABLE `follow_count` (
     UNIQUE KEY `uk_user_id` (`user_id`),
     KEY `ix_update_time` (`update_time`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin COMMENT '关注计数表';
+
+--数据表已经建好，在go_zero_demo/go_zero_beyond/application/follow/rpc 目录下执行
+-- goctl model mysql datasource --dir ./internal/model --table follow,follow_count  --cache true --url "root:root@tcp(127.0.0.1:3306)/beyond_follow"

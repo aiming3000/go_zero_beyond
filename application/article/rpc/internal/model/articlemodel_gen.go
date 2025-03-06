@@ -39,7 +39,8 @@ type (
 	}
 
 	Article struct {
-		Id          uint64    `db:"id"`           // 主键ID
+		//Id          uint64    `db:"id"`           // 主键ID
+		Id          int64     `db:"id"`           // 主键ID
 		Title       string    `db:"title"`        // 标题
 		Content     string    `db:"content"`      // 内容
 		Cover       string    `db:"cover"`        // 封面

@@ -86,7 +86,7 @@ service article-api {
 
 ```
 
-在api目录执行命令
+在.api文件目录下执行命令
 ```
 goctl api go --dir=./  --api article.api
 ```

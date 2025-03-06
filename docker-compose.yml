@@ -106,39 +106,76 @@ services:
     networks:
       - go_zero_beyond
 
-#https://www.jianshu.com/p/1b54117cf386
-  canal-server:
-    image: canal/canal-server #最新的可能有bug，就用这个1.14吧
-    container_name: canal-server
-    ports:
-      - 11111:11111
-    environment:
-      - canal.auto.scan=false
-#      - canal.destinations=woods_test
-      - canal.instance.master.address=127.0.0.1:3306  #要监听的mysql地址
-      - canal.instance.dbUsername=canal
-      - canal.instance.dbPassword=canal
-      - canal.instance.connectionCharset=UTF-8
-      - canal.instance.tsdb.enable=true
-      - canal.instance.gtidon=false
-      - canal.instance.filter.regex=.*\\..*  #监听规则
-#    volumes:
-#      - ./docker-content/canal-server/conf/:/admin/canal-server/conf/ #挂载文件至宿主机
-#      - ./docker-content/canal-server/logs/:/admin/canal-server/logs/
-    networks:
-      - go_zero_beyond
+##https://www.jianshu.com/p/1b54117cf386
+#  canal-server:
+#    image: canal/canal-server #最新的可能有bug，就用这个1.14吧
+#    container_name: canal-server
+#    ports:
+#      - 11111:11111
+#    environment:
+#      - canal.auto.scan=false
+##      - canal.destinations=woods_test
+#      - canal.instance.master.address=127.0.0.1:3306  #要监听的mysql地址
+#      - canal.instance.dbUsername=canal
+#      - canal.instance.dbPassword=canal
+#      - canal.instance.connectionCharset=UTF-8
+#      - canal.instance.tsdb.enable=true
+#      - canal.instance.gtidon=false
+#      - canal.instance.filter.regex=.*\\..*  #监听规则
+##    volumes:
+##      - ./docker-content/canal-server/conf/:/admin/canal-server/conf/ #挂载文件至宿主机
+##      - ./docker-content/canal-server/logs/:/admin/canal-server/logs/
+#    networks:
+#      - go_zero_beyond
+#
+#  canal-admin:
+#    image: canal/canal-admin
+#    container_name: canal-admin
+#    ports:
+#      - 8189:8089
+#    environment:
+#      - server.port=8089
+##      - canal.adminUser=admin
+##      - canal.adminPasswd=123456
+#    networks:
+#      - go_zero_beyond
 
-  canal-admin:
-    image: canal/canal-admin
-    container_name: canal-admin
-    ports:
-      - 8189:8089
-    environment:
-      - server.port=8089
-#      - canal.adminUser=admin
-#      - canal.adminPasswd=123456
-    networks:
-      - go_zero_beyond
+#   https://www.jb51.net/server/324342eq4.htm
+#  elasticsearch:
+#    image: elasticsearch:8.15.1
+#    container_name: es
+#    ports:
+#      - 9200:9200
+#      - 9300:9300
+#    environment:
+#      - discovery.type=single-node
+#      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+#      - ELASTIC_PASSWORD=elastic123  #设置密码
+#      - xpack.security.http.ssl.enabled=false  # 关闭https
+#      - xpack.license.self_generated.type=trial
+#
+##    volumes:
+##      - es-data:/usr/share/elasticsearch/data #
+##      - es-logs:/usr/share/elasticsearch/logs
+##      - es-plugins:/usr/share/elasticsearch/plugins
+#    networks:
+#      - go_zero_beyond
+#
+#  kibana:
+#    image: kibana:8.15.1
+#    container_name: kibana
+#    ports:
+#      - 5601:5601
+#    environment:
+#      - ELASTICSEARCH_URL=http://es:9200
+#      - ELASTICSEARCH_HOSTS=http://es:9200
+#      - ELASTICSEARCH_USERNAME=kibana_system
+#      - ELASTICSEARCH_PASSWORD=kibana_system
+#      - "xpack.security.enabled=false" # 不需要密码校验
+#      - "xpack.license.self_generated.type=trial"
+#
+#    networks:
+#      - go_zero_beyond
 
 volumes:
   redis-data:

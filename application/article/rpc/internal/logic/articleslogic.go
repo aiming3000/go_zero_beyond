@@ -88,7 +88,6 @@ func (l *ArticlesLogic) Articles(in *pb.ArticlesRequest) (*pb.ArticlesResponse, 
 			return nil, err
 		}
 
-		// 通过sortFiled对articles进行排序
 		var cmpFunc func(a, b *model.Article) int
 		if sortField == "like_num" {
 			cmpFunc = func(a, b *model.Article) int {
@@ -99,11 +98,11 @@ func (l *ArticlesLogic) Articles(in *pb.ArticlesRequest) (*pb.ArticlesResponse, 
 				return cmp.Compare(b.PublishTime.Unix(), a.PublishTime.Unix())
 			}
 		}
-		slices.SortFunc(articles, cmpFunc)
+		slices.SortFunc(articles, cmpFunc) //根据不同的sortField对articles切片进行排序
 
 		for _, article := range articles {
 			curPage = append(curPage, &pb.ArticleItem{
-				Id:           int64(article.Id),
+				Id:           article.Id,
 				Title:        article.Title,
 				Content:      article.Content,
 				LikeCount:    article.LikeNum,
@@ -111,7 +110,9 @@ func (l *ArticlesLogic) Articles(in *pb.ArticlesRequest) (*pb.ArticlesResponse, 
 				PublishTime:  article.PublishTime.Unix(),
 			})
 		}
-	} else {
+	} else { //缓存中不存在的情况
+		//singleflight的原理是当同时有很多请求同时到来时，最终只有一个请求会最终访问到资源，其他请求都会等待结果然后返回。
+		//它的作用是避免同一个 key 对下游发起多次请求，降低下游流量。
 		v, err, _ := l.svcCtx.SingleFlightGroup.Do(fmt.Sprintf("ArticlesByUserId:%d:%d", in.UserId, in.SortType), func() (interface{}, error) {
 			return l.svcCtx.ArticleModel.ArticlesByUserId(l.ctx, in.UserId, types.ArticleStatusVisible, sortLikeNum, sortPublishTime, sortField, types.DefaultLimit)
 		})
@@ -132,7 +133,7 @@ func (l *ArticlesLogic) Articles(in *pb.ArticlesRequest) (*pb.ArticlesResponse, 
 		}
 		for _, article := range firstPageArticles {
 			curPage = append(curPage, &pb.ArticleItem{
-				Id:           int64(article.Id),
+				Id:           article.Id,
 				Title:        article.Title,
 				Content:      article.Content,
 				LikeCount:    article.LikeNum,
@@ -175,10 +176,10 @@ func (l *ArticlesLogic) Articles(in *pb.ArticlesRequest) (*pb.ArticlesResponse, 
 		Articles:  curPage,
 	}
 
-	if !isCache {
+	if !isCache { //缓存不存在的情况下异步写入缓存
 		threading.GoSafe(func() {
 			if len(articles) < types.DefaultLimit && len(articles) > 0 {
-				articles = append(articles, &model.Article{Id: 0})
+				articles = append(articles, &model.Article{Id: -1})
 			}
 			err = l.addCacheArticles(context.Background(), articles, in.UserId, in.SortType)
 			if err != nil {
@@ -263,7 +264,7 @@ func (l *ArticlesLogic) addCacheArticles(ctx context.Context, articles []*model.
 		var score int64
 		if sortType == types.SortLikeCount {
 			score = article.LikeNum
-		} else if sortType == types.SortPublishTime && article.Id != 0 {
+		} else if sortType == types.SortPublishTime && article.Id != -1 {
 			score = article.PublishTime.Local().Unix()
 		}
 		if score < 0 {

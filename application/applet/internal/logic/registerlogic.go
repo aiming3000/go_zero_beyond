@@ -3,6 +3,7 @@ package logic
 import (
 	"context"
 	"errors"
+	"github.com/zeromicro/go-zero/core/stores/redis"
 	"go_zero_bryond/application/applet/internal/code"
 	"go_zero_bryond/application/user/rpc/user"
 	"go_zero_bryond/pkg/encrypt"
@@ -53,12 +54,13 @@ func (l *RegisterLogic) Register(req *types.RegisterRequest) (resp *types.Regist
 	}
 
 	//检测验证码逻辑
-	//err := checkVerificationCode(l.svcCtx.BizRedis, req.Mobile, req.VerificationCode)
-	//if err != nil {
-	//	logx.Errorf("checkVerificationCode error: %v", err)
-	//	return nil, err
-	//}
+	err = checkVerificationCode(l.svcCtx.BizRedis, req.Mobile, req.VerificationCode)
+	if err != nil {
+		logx.Errorf("checkVerificationCode error: %v", err)
+		return nil, err
+	}
 
+	//手机号码进行加密
 	mobile, err := encrypt.EncMobile(req.Mobile)
 	if err != nil {
 		logx.Errorf("EncMobile mobile: %s error: %v", req.Mobile, err)
@@ -105,4 +107,18 @@ func (l *RegisterLogic) Register(req *types.RegisterRequest) (resp *types.Regist
 			AccessExpire: token.AccessExpire,
 		},
 	}, nil
+}
+
+func checkVerificationCode(rds *redis.Redis, mobile, code string) error {
+	cacheCode, err := getActivationCache(mobile, rds)
+	if err != nil {
+		return err
+	}
+	if cacheCode == "" {
+		return errors.New("verification code expired")
+	}
+	if cacheCode != code {
+		return errors.New("verification code failed")
+	}
+	return nil
 }
