@@ -4,6 +4,7 @@ import (
 	"context"
 	"go_zero_bryond/application/article/rpc/internal/code"
 	"go_zero_bryond/application/article/rpc/internal/types"
+	"go_zero_bryond/pkg/xcode"
 
 	"go_zero_bryond/application/article/rpc/internal/svc"
 	"go_zero_bryond/application/article/rpc/pb"
@@ -39,7 +40,18 @@ func (l *ArticleDeleteLogic) ArticleDelete(in *pb.ArticleDeleteRequest) (*pb.Art
 	}
 
 	// 第二步调用model 处理数据
-	err := l.svcCtx.ArticleModel.UpdateArticleStatus(l.ctx, in.ArticleId, types.ArticleStatusUserDelete)
+
+	//只能删除自己发布的，别人发布的不可以删除
+	article, err := l.svcCtx.ArticleModel.FindOne(l.ctx, uint64(in.ArticleId))
+	if err != nil {
+		l.Logger.Errorf("ArticleDelete FindOne req: %v error: %v", in, err)
+		return nil, err
+	}
+	if article.AuthorId != uint64(in.UserId) {
+		return nil, xcode.AccessDenied
+	}
+
+	err = l.svcCtx.ArticleModel.UpdateArticleStatus(l.ctx, in.ArticleId, types.ArticleStatusUserDelete)
 	if err != nil {
 		l.Logger.Errorf("UpdateArticleStatus req: %v error: %v", in, err)
 		return nil, err
