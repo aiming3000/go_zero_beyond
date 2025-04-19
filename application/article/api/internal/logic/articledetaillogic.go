@@ -2,8 +2,8 @@ package logic
 
 import (
 	"context"
-	"errors"
 	"fmt"
+	"go_zero_bryond/application/article/api/internal/code"
 	"go_zero_bryond/application/article/api/internal/svc"
 	"go_zero_bryond/application/article/api/internal/types"
 	"go_zero_bryond/application/article/rpc/article"
@@ -28,15 +28,17 @@ func NewArticleDetailLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Art
 }
 
 func (l *ArticleDetailLogic) ArticleDetail(req *types.ArticleDetailRequest) (resp *types.ArticleDetailResponse, err error) {
-	// todo: add your logic here and delete this line
+	//第一步： 参数校验处理
 	if req.ArticleId == 0 {
-		return nil, errors.New("文章ID不能是0")
+		//return nil, errors.New("文章ID不能是0")
+		return nil, code.ArticleIdEmpty
 	}
-	//调用ArticleRPC服务查询
+
+	//第二步：调用ArticleRPC服务查询
 	articleInfo, err := l.svcCtx.ArticleRPC.ArticleDetail(l.ctx, &article.ArticleDetailRequest{
 		ArticleId: req.ArticleId,
 	})
-	fmt.Println(111)
+
 	if err != nil {
 		logx.Errorf("get article detail id: %d err: %v", req.ArticleId, err)
 		return nil, err
@@ -52,6 +54,7 @@ func (l *ArticleDetailLogic) ArticleDetail(req *types.ArticleDetailRequest) (res
 		logx.Errorf("get userInfo id: %d err: %v", articleInfo.Article.AuthorId, err)
 		return nil, err
 	}
+	// 第三步：返回数据处理
 	return &types.ArticleDetailResponse{
 		Title:       articleInfo.Article.Title,
 		Content:     articleInfo.Article.Content,

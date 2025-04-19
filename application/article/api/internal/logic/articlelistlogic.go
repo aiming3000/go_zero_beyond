@@ -2,6 +2,7 @@ package logic
 
 import (
 	"context"
+	"fmt"
 	"go_zero_bryond/application/article/rpc/article"
 
 	"go_zero_bryond/application/article/api/internal/svc"
@@ -25,8 +26,10 @@ func NewArticleListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Artic
 }
 
 func (l *ArticleListLogic) ArticleList(req *types.ArticleListRequest) (resp *types.ArticleListResponse, err error) {
+	// 调用ArticleRPC 接口获取数据
+	fmt.Println(req.ArticleId)
 	articles, err := l.svcCtx.ArticleRPC.Articles(l.ctx, &article.ArticlesRequest{
-		UserId:    req.ArticleId,
+		UserId:    req.AuthorId,
 		Cursor:    req.Cursor,
 		PageSize:  req.PageSize,
 		SortType:  req.SortType,

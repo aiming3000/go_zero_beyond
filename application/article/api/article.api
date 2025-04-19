@@ -60,6 +60,13 @@ service article-api {
 
 	@handler ArticleListHandler
 	get /list (ArticleListRequest) returns (ArticleListResponse)
+
+	// 在原有基础上新增功能
+	@handler ArticleDelete
+	get /delete (ArticleDetailRequest) returns (ArticleDetailResponse)
+
+	@handler ArticleEdit
+	post /edit (PublishRequest) returns (PublishResponse)
 }
 
 //当前文件目录下

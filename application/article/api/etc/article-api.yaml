@@ -4,6 +4,7 @@ Port: 8889
 Auth:
   AccessSecret: duerueudfnd235sdh
   AccessExpire: 3600
+
 ArticleRpc:
   Etcd:
     Hosts:
@@ -16,3 +17,9 @@ UserRPC:
       - 127.0.0.1:2379
     Key: user.rpc
   NonBlock: true
+
+Oss:
+  Endpoint: oss-cn-beijing.aliyuncs.com
+  AccessKeyId: LTAI5tJsGPHZKFcUb8Ljr37A
+  AccessKeySecret: 32erbVHckG6EOaYZh45j1EvCsFsdA7
+  BucketName: beyond-article-liu

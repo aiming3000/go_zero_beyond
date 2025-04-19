@@ -7,5 +7,5 @@ Etcd:
   Key: like.rpc
 KqPusherConf:
   Brokers:
-    - 127.0.0.1:9094
+    - 127.0.0.1:9092
   Topic: topic-beyond-like

@@ -6,12 +6,19 @@ import (
 	"github.com/zeromicro/go-zero/rest/httpx"
 	"go_zero_bryond/application/article/api/internal/logic"
 	"go_zero_bryond/application/article/api/internal/svc"
+	"go_zero_bryond/application/article/api/internal/types"
 )
 
-func UploadCoverHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
+func ArticleEditHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		l := logic.NewUploadCoverLogic(r.Context(), svcCtx)
-		resp, err := l.UploadCover(r)
+		var req types.PublishRequest
+		if err := httpx.Parse(r, &req); err != nil {
+			httpx.ErrorCtx(r.Context(), w, err)
+			return
+		}
+
+		l := logic.NewArticleEditLogic(r.Context(), svcCtx)
+		resp, err := l.ArticleEdit(&req)
 		if err != nil {
 			httpx.ErrorCtx(r.Context(), w, err)
 		} else {

@@ -29,3 +29,4 @@ insert into article(title, content, author_id, like_num, publish_time) values ('
 
 --数据表article已经建好，在go_zero_demo/go_zero_beyond/application/article/rpc 目录下执行
 -- goctl model mysql datasource --dir ./internal/model --table article --cache true --url "root:root@tcp(127.0.0.1:3306)/beyond_article"
+-- goctl model mysql datasource --dir ./internal/model --table article --url "root:root@tcp(127.0.0.1:3306)/beyond_article"

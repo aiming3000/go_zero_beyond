@@ -210,7 +210,7 @@ insert into article(title, content, author_id, like_num, publish_time) values ('
 ```
 在go_zero_beyond/application/article/rpc 目录下执行执行下面命令
 ```
-goctl model mysql datasource --dir ./internal/model --table article --cache true --url "root:root@tcp(127.0.0.1:3306)/beyond_article"
+goctl model mysql datasource --dir ./internal/model --table article --url "root:root@tcp(127.0.0.1:3306)/beyond_article"
 ```
 
 ## api服务调用RPC服务
@@ -354,4 +354,55 @@ func (l *ArticleDetailLogic) ArticleDetail(in *pb.ArticleDetailRequest) (*pb.Art
 ![](D:\ruanjian\Golang\go1.22.4\path\src\demo\go_zero_demo\go_zero_beyond\doc\image\img.png)
 
 接下来完成其他RPC服务逻辑，这里不再赘述
+
+### 添加文章RPC逻辑
+go_zero_demo/go_zero_beyond/application/article/rpc/internal/logic/publishlogic.go
+```go
+func (l *PublishLogic) Publish(in *pb.PublishRequest) (*pb.PublishResponse, error) {
+	// todo: add your logic here and delete this line
+	// 第一步：参数校验处理
+	if in.UserId <= 0 {
+		return nil, code.UserIdInvalid
+	}
+	if len(in.Title) == 0 {
+		return nil, code.ArticleTitleCantEmpty
+	}
+	if len(in.Content) == 0 {
+		return nil, code.ArticleContentCantEmpty
+	}
+	// 第二部：利用model 操作数据库
+	ret, err := l.svcCtx.ArticleModel.Insert(l.ctx, &model.Article{
+		Title:       in.Title,
+		Content:     in.Content,
+		Cover:       in.Cover,
+		Description: in.Description,
+		AuthorId:    uint64(in.UserId),
+		Status:      types.ArticleStatusVisible,
+		PublishTime: time.Now(),
+		CreateTime:  time.Now(),
+		UpdateTime:  time.Now(),
+	})
+	if err != nil {
+		l.Logger.Errorf("Publish Insert req: %v error: %v", in, err)
+		return nil, err
+	}
+	articleId, err := ret.LastInsertId()
+	if err != nil {
+		l.Logger.Errorf("LastInsertId error: %v", err)
+		return nil, err
+	}
+	// 第三步： 返回数据处理
+
+	return &pb.PublishResponse{ArticleId: articleId}, nil
+
+}
+```
+### 获取文章列表
+
+
+
+### 删除文章
+
+
+### 编辑文章
 
